@@ -2,7 +2,7 @@
 <parameters>
 
     <!-- Connection details -->
-    <type>MARIADB</type>
+    <type>XPAND</type>
     <driver>org.mariadb.jdbc.Driver</driver>
     <url>jdbc:mariadb:loadbalance://xpand1:3306,xpand2:3306,xpand3:3306/benchbase?rewriteBatchedStatements=true&amp;useServerPrepStmts</url>
     <username>admin</username>
