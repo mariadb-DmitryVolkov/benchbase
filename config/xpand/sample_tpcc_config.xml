@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<parameters>
+
+    <!-- Connection details -->
+    <type>MARIADB</type>
+    <driver>org.mariadb.jdbc.Driver</driver>
+    <url>jdbc:mariadb:loadbalance://xpand1:3306,xpand2:3306,xpand3:3306/benchbase?rewriteBatchedStatements=true&amp;useServerPrepStmts</url>
+    <username>admin</username>
+    <password>password</password>
+    <isolation>TRANSACTION_REPEATABLE_READ</isolation>
+    <batchsize>128</batchsize>
+
+    <!-- Scale factor is the number of warehouses in TPCC -->
+    <scalefactor>1</scalefactor>
+
+    <!-- The workload -->
+    <terminals>1</terminals>
+    <works>
+        <work>
+            <time>60</time>
+            <rate>10000</rate>
+            <weights>45,43,4,4,4</weights>
+        </work>
+    </works>
+
+    <!-- TPCC specific -->
+    <transactiontypes>
+        <transactiontype>
+            <name>NewOrder</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Payment</name>
+        </transactiontype>
+        <transactiontype>
+            <name>OrderStatus</name>
+        </transactiontype>
+        <transactiontype>
+            <name>Delivery</name>
+        </transactiontype>
+        <transactiontype>
+            <name>StockLevel</name>
+        </transactiontype>
+    </transactiontypes>
+</parameters>
