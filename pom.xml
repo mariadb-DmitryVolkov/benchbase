@@ -86,6 +86,19 @@
             </dependencies>
         </profile>
         <profile>
+            <id>xpand</id>
+            <properties>
+                <classifier>xpand</classifier>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.mariadb.jdbc</groupId>
+                    <artifactId>mariadb-java-client</artifactId>
+                    <version>2.7.6</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>spanner</id>
             <properties>
                 <classifier>spanner</classifier>

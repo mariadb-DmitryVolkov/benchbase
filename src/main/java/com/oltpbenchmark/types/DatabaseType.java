@@ -49,7 +49,8 @@ public enum DatabaseType {
     SQLITE(true, false),
     SQLSERVER(true, false),
     TIMESTEN(true, false),
-    PHOENIX(true, true);
+    PHOENIX(true, true),
+    XPAND(true, false);
 
 
     DatabaseType(boolean escapeNames, boolean includeColNames) {
