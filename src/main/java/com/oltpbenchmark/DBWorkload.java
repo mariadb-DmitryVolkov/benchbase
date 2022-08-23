@@ -491,6 +491,7 @@ public class DBWorkload {
         options.addOption("d", "directory", true, "Base directory for the result files, default is current directory");
         options.addOption(null, "dialects-export", true, "Export benchmark SQL to a dialects file");
         options.addOption("jh", "json-histograms", true, "Export histograms to JSON file");
+        options.addOption("r", "raw", false, "Save raw transaction output");
         return options;
     }
 
@@ -568,12 +569,14 @@ public class DBWorkload {
 
         int windowSize = Integer.parseInt(argsLine.getOptionValue("s", "5"));
 
-        String rawFileName = baseFileName + ".raw.csv";
-        try (PrintStream ps = new PrintStream(FileUtil.joinPath(outputDirectory, rawFileName))) {
-            LOG.info("Output Raw data into file: {}", rawFileName);
-            rw.writeRaw(activeTXTypes, ps);
+        if (argsLine.hasOption("r")) {
+            String rawFileName = baseFileName + ".raw.csv";
+            try (PrintStream ps = new PrintStream(FileUtil.joinPath(outputDirectory, rawFileName))) {
+                LOG.info("Output Raw data into file: {}", rawFileName);
+                rw.writeRaw(activeTXTypes, ps);
+            }
         }
-
+        
         String sampleFileName = baseFileName + ".samples.csv";
         try (PrintStream ps = new PrintStream(FileUtil.joinPath(outputDirectory, sampleFileName))) {
             LOG.info("Output samples into file: {}", sampleFileName);
