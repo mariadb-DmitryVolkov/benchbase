@@ -51,6 +51,7 @@ public enum DatabaseType {
     SQLSERVER(true, false),
     TIMESTEN(true, false),
     PHOENIX(true, true),
+    TIDB(true, false),
     XPAND(true, false);
 
 

@@ -112,6 +112,19 @@
             </dependencies>
         </profile>
         <profile>
+            <id>tidb</id>
+            <properties>
+                <classifier>tidb</classifier>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <version>8.0.28</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>spanner</id>
             <properties>
                 <classifier>spanner</classifier>
