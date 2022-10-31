@@ -2,6 +2,13 @@ DROP TABLE IF EXISTS region CASCADE;
 DROP TABLE IF EXISTS nation CASCADE;
 DROP TABLE IF EXISTS supplier CASCADE;
 
+CREATE TABLE `region` (
+  `r_regionkey` int(11) not null,
+  `r_name` char(55) CHARACTER SET utf8 not null,
+  `r_comment` char(152) CHARACTER SET utf8 not null,
+  PRIMARY KEY (`r_regionkey`) /*$ DISTRIBUTE=1 */
+) CHARACTER SET utf8;
+
 CREATE TABLE `nation` (
   `n_nationkey` int(11) not null,
   `n_name` char(25) CHARACTER SET utf8 not null,
@@ -10,13 +17,6 @@ CREATE TABLE `nation` (
   PRIMARY KEY (`n_nationkey`) /*$ DISTRIBUTE=1 */,
   KEY `n_regionkey` (`n_regionkey`) /*$ DISTRIBUTE=1 */,
   CONSTRAINT `nation_ibfk_1` FOREIGN KEY (`n_regionkey`) REFERENCES `region` (`r_regionkey`) ON DELETE CASCADE ON UPDATE RESTRICT
-) CHARACTER SET utf8;
-
-CREATE TABLE `region` (
-  `r_regionkey` int(11) not null,
-  `r_name` char(55) CHARACTER SET utf8 not null,
-  `r_comment` char(152) CHARACTER SET utf8 not null,
-  PRIMARY KEY (`r_regionkey`) /*$ DISTRIBUTE=1 */,
 ) CHARACTER SET utf8;
 
 CREATE TABLE `supplier` (
