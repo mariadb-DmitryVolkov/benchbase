@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS region CASCADE;
 DROP TABLE IF EXISTS nation CASCADE;
 DROP TABLE IF EXISTS supplier CASCADE;
+DROP VIEW IF EXISTS revenue0;
 
 /* add view creation here for revenue0 and remove it from Q15 */
 CREATE view revenue0 (supplier_no, total_revenue) AS 
@@ -14,7 +15,7 @@ CREATE view revenue0 (supplier_no, total_revenue) AS
     AND ol_supply_w_id = s_w_id 
     AND ol_delivery_d >= '2007-01-02 00:00:00.000000' 
   GROUP BY 
-    supplier_no
+    supplier_no;
 
 CREATE TABLE `region` (
   `r_regionkey` int(11) not null,
