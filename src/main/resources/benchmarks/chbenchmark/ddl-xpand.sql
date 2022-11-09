@@ -2,6 +2,20 @@ DROP TABLE IF EXISTS region CASCADE;
 DROP TABLE IF EXISTS nation CASCADE;
 DROP TABLE IF EXISTS supplier CASCADE;
 
+/* add view creation here for revenue0 and remove it from Q15 */
+CREATE view revenue0 (supplier_no, total_revenue) AS 
+  SELECT 
+    mod((s_w_id * s_i_id),10000) as supplier_no, 
+    sum(ol_amount) as total_revenue 
+  FROM 
+    order_line, stock 
+  WHERE 
+    ol_i_id = s_i_id 
+    AND ol_supply_w_id = s_w_id 
+    AND ol_delivery_d >= '2007-01-02 00:00:00.000000' 
+  GROUP BY 
+    supplier_no
+
 CREATE TABLE `region` (
   `r_regionkey` int(11) not null,
   `r_name` char(55) CHARACTER SET utf8 not null,

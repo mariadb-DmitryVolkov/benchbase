@@ -25,21 +25,6 @@ import java.sql.Statement;
 
 public class Q15 extends GenericQuery {
 
-    public final SQLStmt createview_stmt = new SQLStmt(
-            "CREATE view revenue0 (supplier_no, total_revenue) AS "
-                    + "SELECT "
-                    + "mod((s_w_id * s_i_id),10000) as supplier_no, "
-                    + "sum(ol_amount) as total_revenue "
-                    + "FROM "
-                    + "order_line, stock "
-                    + "WHERE "
-                    + "ol_i_id = s_i_id "
-                    + "AND ol_supply_w_id = s_w_id "
-                    + "AND ol_delivery_d >= '2007-01-02 00:00:00.000000' "
-                    + "GROUP BY "
-                    + "supplier_no"
-    );
-
     public final SQLStmt query_stmt = new SQLStmt(
             "SELECT su_suppkey, "
                     + "su_name, "
@@ -52,24 +37,7 @@ public class Q15 extends GenericQuery {
                     + "ORDER BY su_suppkey"
     );
 
-    public final SQLStmt dropview_stmt = new SQLStmt(
-            "DROP VIEW revenue0"
-    );
-
     protected SQLStmt get_query() {
         return query_stmt;
-    }
-
-    public void run(Connection conn) throws SQLException {
-        // With this query, we have to set up a view before we execute the
-        // query, then drop it once we're done.
-        try (Statement stmt = conn.createStatement()) {
-            try {
-                stmt.executeUpdate(createview_stmt.getSQL());
-                super.run(conn);
-            } finally {
-                stmt.executeUpdate(dropview_stmt.getSQL());
-            }
-        }
     }
 }
