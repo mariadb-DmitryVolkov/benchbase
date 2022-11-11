@@ -66,8 +66,8 @@ CREATE TABLE partsupp (
 ;
 CREATE INDEX ps_pk ON partsupp (ps_partkey ASC) DISTRIBUTE=1;
 CREATE INDEX ps_sk ON partsupp (ps_suppkey ASC) DISTRIBUTE=2;
-CREATE UNIQUE INDEX ps_pk_sk ON partsupp (ps_partkey ASC, ps_suppkey ASC) DISTRIBUTE=3;
-CREATE UNIQUE INDEX ps_sk_pk ON partsupp (ps_suppkey ASC, ps_partkey ASC) DISTRIBUTE=3;
+CREATE UNIQUE INDEX ps_pk_sk ON partsupp (ps_partkey ASC, ps_suppkey ASC) DISTRIBUTE=2;
+CREATE UNIQUE INDEX ps_sk_pk ON partsupp (ps_suppkey ASC, ps_partkey ASC) DISTRIBUTE=2;
 
 CREATE TABLE customer (
     c_custkey    integer        NOT NULL,
