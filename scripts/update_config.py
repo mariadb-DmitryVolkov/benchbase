@@ -33,7 +33,7 @@ def main():
         "-tb",
         "--terminals_chbenchmark",
         action="store",
-        dest="terminals",
+        dest="terminals_chbenchmark",
         help="terminals to update",
         required=False,
     )
@@ -42,7 +42,7 @@ def main():
         "-tt",
         "--terminals_tpcc",
         action="store",
-        dest="terminals",
+        dest="terminals_tpcc",
         help="terminals to update",
         required=False,
     )
@@ -67,16 +67,22 @@ def main():
         data["parameters"]["terminals"] = args.terminals
 
     if args.terminals_chbenchmark is not None:
-        data["parameters"]["terminals_chbenchmark"] = args.terminals_chbenchmark
+
+        # [{'@bench': 'chbenchmark', '#text': '{{terminals_chbenchmark}}'}, {'@bench': 'tpcc', '#text': '{{terminals_tpcc}}'}]
+        data["parameters"]["terminals"] = [
+            {"@bench": "chbenchmark", "#text": args.terminals_chbenchmark}
+        ]
+
         # 'rate': [{'@bench': 'chbenchmark', '#text': 'unlimited'}, {'@bench': 'tpcc', '#text': 'unlimited'}]
-        rate = "unlimited" if args.terminals_chbenchmark > 0 else "disabled"
+        rate = "unlimited" if int(args.terminals_chbenchmark) > 0 else "disabled"
         data["parameters"]["works"]["work"]["rate"] = [
             {"@bench": "chbenchmark", "#text": rate}
         ]
 
     if args.terminals_tpcc is not None:
-        data["parameters"]["terminals_tpcc"] = args.terminals_tpcc
-        rate = "unlimited" if args.terminals_tpcc > 0 else "disabled"
+        data["parameters"]["terminals"].append({"@bench": "tpcc", "#text": args.terminals_tpcc})
+
+        rate = "unlimited" if int(args.terminals_tpcc) > 0 else "disabled"
         data["parameters"]["works"]["work"]["rate"].append(
             {"@bench": "tpcc", "#text": rate}
         )
