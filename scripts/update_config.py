@@ -68,14 +68,17 @@ def main():
 
     if args.terminals_chbenchmark is not None:
         data["parameters"]["terminals_chbenchmark"] = args.terminals_chbenchmark
-        data["parameters"]["works"]["work"]["rate_chbenchmark"] = (
-            "unlimited" if args.terminals_chbenchmark > 0 else "disabled"
-        )
+        # 'rate': [{'@bench': 'chbenchmark', '#text': 'unlimited'}, {'@bench': 'tpcc', '#text': 'unlimited'}]
+        rate = "unlimited" if args.terminals_chbenchmark > 0 else "disabled"
+        data["parameters"]["works"]["work"]["rate"] = [
+            {"@bench": "chbenchmark", "#text": rate}
+        ]
 
     if args.terminals_tpcc is not None:
         data["parameters"]["terminals_tpcc"] = args.terminals_tpcc
-        data["parameters"]["works"]["work"]["rate_tpcc"] = (
-            "unlimited" if args.terminals_tpcc > 0 else "disabled"
+        rate = "unlimited" if args.terminals_tpcc > 0 else "disabled"
+        data["parameters"]["works"]["work"]["rate"].append(
+            {"@bench": "tpcc", "#text": rate}
         )
 
     data["parameters"]["randomSeed"] = randomseed
