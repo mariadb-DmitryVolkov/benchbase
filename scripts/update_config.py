@@ -26,8 +26,27 @@ def main():
         action="store",
         dest="terminals",
         help="terminals to update",
-        required=True,
+        required=False,
     )
+
+    parser.add_argument(
+        "-tb",
+        "--terminals_chbenchmark",
+        action="store",
+        dest="terminals",
+        help="terminals to update",
+        required=False,
+    )
+
+    parser.add_argument(
+        "-tt",
+        "--terminals_tpcc",
+        action="store",
+        dest="terminals",
+        help="terminals to update",
+        required=False,
+    )
+
     parser.add_argument(
         "-r",
         "--randomseed",
@@ -39,13 +58,26 @@ def main():
 
     args = parser.parse_args()
     xml_config_file_name = args.config
-    terminals = args.terminals
     randomseed = args.randomseed
 
     with open(xml_config_file_name) as xml:
         data = xmltodict.parse(xml.read())
 
-    data["parameters"]["terminals"] = terminals
+    if args.terminals is not None:
+        data["parameters"]["terminals"] = args.terminals
+
+    if args.terminals_chbenchmark is not None:
+        data["parameters"]["terminals_chbenchmark"] = args.terminals_chbenchmark
+        data["parameters"]["works"]["work"]["rate_chbenchmark"] = (
+            "unlimited" if args.terminals_chbenchmark > 0 else "disabled"
+        )
+
+    if args.terminals_tpcc is not None:
+        data["parameters"]["terminals_tpcc"] = args.terminals_tpcc
+        data["parameters"]["works"]["work"]["rate_tpcc"] = (
+            "unlimited" if args.terminals_tpcc > 0 else "disabled"
+        )
+
     data["parameters"]["randomSeed"] = randomseed
 
     with open(xml_config_file_name, "w") as result_file:

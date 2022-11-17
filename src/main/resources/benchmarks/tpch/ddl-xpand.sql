@@ -12,7 +12,7 @@ CREATE TABLE region (
     r_name      char(25) NOT NULL,
     r_comment   varchar(152),
     PRIMARY KEY (r_regionkey) /*$ DISTRIBUTE=1 */
-) CHARACTER SET utf8
+) REPLICAS = ALLNODES CHARACTER SET utf8
 ;
 CREATE UNIQUE INDEX r_rk ON region (r_regionkey ASC) DISTRIBUTE=1;
 
@@ -22,7 +22,8 @@ CREATE TABLE nation (
     n_regionkey integer  NOT NULL,
     n_comment   varchar(152),
     PRIMARY KEY (n_nationkey)
-);
+) REPLICAS = ALLNODES CHARACTER SET utf8
+;
 CREATE UNIQUE INDEX n_nk ON nation (n_nationkey ASC) DISTRIBUTE=1;
 CREATE INDEX n_rk ON nation (n_regionkey ASC) DISTRIBUTE=2;
 
