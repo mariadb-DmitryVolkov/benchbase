@@ -14,18 +14,19 @@ CREATE TABLE region (
     PRIMARY KEY (r_regionkey) /*$ DISTRIBUTE=1 */
 ) REPLICAS = ALLNODES CHARACTER SET utf8
 ;
-CREATE UNIQUE INDEX r_rk ON region (r_regionkey ASC) DISTRIBUTE=1;
+CREATE INDEX idx_name ON region (r_name) DISTRIBUTE=1;
 
 CREATE TABLE nation (
     n_nationkey integer  NOT NULL,
     n_name      char(25) NOT NULL,
     n_regionkey integer  NOT NULL,
     n_comment   varchar(152),
-    PRIMARY KEY (n_nationkey)
-) REPLICAS = ALLNODES CHARACTER SET utf8
+    PRIMARY KEY (n_nationkey) /*$ DISTRIBUTE=1 */,
+    CONSTRAINT nation_ibfk_1 FOREIGN KEY (n_regionkey) REFERENCES region (r_regionkey) ON DELETE RESTRICT ON UPDATE RESTRICT
+) REPLICAS = ALLNODES CHARACTER SET utf8 
 ;
-CREATE UNIQUE INDEX n_nk ON nation (n_nationkey ASC) DISTRIBUTE=1;
-CREATE INDEX n_rk ON nation (n_regionkey ASC) DISTRIBUTE=2;
+CREATE INDEX nation_fk1 on nation (n_regionkey) DISTRIBUTE=1;
+CREATE INDEX idx_name on nation (n_name) DISTRIBUTE=1;
 
 CREATE TABLE part (
     p_partkey     integer        NOT NULL,
@@ -40,7 +41,11 @@ CREATE TABLE part (
     PRIMARY KEY (p_partkey) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
 ;
-CREATE UNIQUE INDEX p_pk ON part (p_partkey ASC) DISTRIBUTE=1;
+CREATE INDEX idx_type on part (p_type) DISTRIBUTE=1;
+CREATE INDEX idx_size on part (p_size) DISTRIBUTE=1;
+CREATE INDEX idx_name on part (p_name) DISTRIBUTE=1;
+CREATE INDEX idx_container on part (p_container) DISTRIBUTE=1;
+CREATE INDEX idx_brand on part (p_brand) DISTRIBUTE=1;
 
 CREATE TABLE supplier (
     s_suppkey   integer        NOT NULL,
@@ -50,11 +55,12 @@ CREATE TABLE supplier (
     s_phone     char(15)       NOT NULL,
     s_acctbal   decimal(15, 2) NOT NULL,
     s_comment   varchar(101)   NOT NULL,
-    PRIMARY KEY (s_suppkey)  /*$ DISTRIBUTE=1 */
+    PRIMARY KEY (s_suppkey)  /*$ DISTRIBUTE=1 */,
+    CONSTRAINT supplier_ibfk_1 FOREIGN KEY (s_nationkey) REFERENCES nation (n_nationkey) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) CHARACTER SET utf8
 ;
-CREATE UNIQUE INDEX s_sk ON supplier (s_suppkey ASC) DISTRIBUTE=1;
-CREATE INDEX s_nk ON supplier (s_nationkey ASC) DISTRIBUTE=2;
+CREATE INDEX supplier_fk1 on supplier (s_nationkey) DISTRIBUTE=1;
+CREATE INDEX idx_comment on supplier (s_comment) DISTRIBUTE=1;
 
 CREATE TABLE partsupp (
     ps_partkey    integer        NOT NULL,
@@ -62,13 +68,13 @@ CREATE TABLE partsupp (
     ps_availqty   integer        NOT NULL,
     ps_supplycost decimal(15, 2) NOT NULL,
     ps_comment    varchar(199)   NOT NULL,
-    PRIMARY KEY (ps_partkey, ps_suppkey) /*$ DISTRIBUTE=1 */
+    PRIMARY KEY (ps_partkey, ps_suppkey) /*$ DISTRIBUTE=2 */,
+    CONSTRAINT partsupp_ibfk_1 FOREIGN KEY (ps_suppkey) REFERENCES supplier (s_suppkey) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT partsupp_ibfk_2 FOREIGN KEY (ps_partkey) REFERENCES part (p_partkey) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) CHARACTER SET utf8
 ;
-CREATE INDEX ps_pk ON partsupp (ps_partkey ASC) DISTRIBUTE=1;
-CREATE INDEX ps_sk ON partsupp (ps_suppkey ASC) DISTRIBUTE=2;
-CREATE UNIQUE INDEX ps_pk_sk ON partsupp (ps_partkey ASC, ps_suppkey ASC) DISTRIBUTE=2;
-CREATE UNIQUE INDEX ps_sk_pk ON partsupp (ps_suppkey ASC, ps_partkey ASC) DISTRIBUTE=2;
+CREATE INDEX partsupp_fk1 on partsupp (ps_suppkey) DISTRIBUTE=1;
+CREATE INDEX idx_supplycost on partsupp (ps_supplycost) DISTRIBUTE=1;
 
 CREATE TABLE customer (
     c_custkey    integer        NOT NULL,
@@ -79,11 +85,13 @@ CREATE TABLE customer (
     c_acctbal    decimal(15, 2) NOT NULL,
     c_mktsegment char(10)       NOT NULL,
     c_comment    varchar(117)   NOT NULL,
-    PRIMARY KEY (c_custkey) /*$ DISTRIBUTE=1 */
+    PRIMARY KEY (c_custkey) /*$ DISTRIBUTE=1 */,
+    CONSTRAINT customer_ibfk_1 FOREIGN KEY (c_nationkey) REFERENCES nation (n_nationkey) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) CHARACTER SET utf8
 ;
-CREATE UNIQUE INDEX c_ck ON customer (c_custkey ASC) DISTRIBUTE=1;
-CREATE INDEX c_nk ON customer (c_nationkey ASC) DISTRIBUTE=2;
+CREATE INDEX idx_mktsegment on customer (c_mktsegment) DISTRIBUTE=1;
+CREATE INDEX idx_acctbal on customer (c_acctbal) DISTRIBUTE=1;
+CREATE INDEX customer_fk1 on customer (c_nationkey) DISTRIBUTE=1;
 
 CREATE TABLE orders (
     o_orderkey      integer        NOT NULL,
@@ -95,12 +103,13 @@ CREATE TABLE orders (
     o_clerk         char(15)       NOT NULL,
     o_shippriority  integer        NOT NULL,
     o_comment       varchar(79)    NOT NULL,
-    PRIMARY KEY (o_orderkey) /*$ DISTRIBUTE=1 */
+    PRIMARY KEY (o_orderkey) /*$ DISTRIBUTE=1 */,
+    CONSTRAINT orders_ibfk_1 FOREIGN KEY (o_custkey) REFERENCES customer (c_custkey) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) CHARACTER SET utf8
 ;
-CREATE UNIQUE INDEX o_ok ON orders (o_orderkey ASC) DISTRIBUTE=1;
-CREATE INDEX o_ck ON orders (o_custkey ASC) DISTRIBUTE=2;
-CREATE INDEX o_od ON orders (o_orderdate ASC) DISTRIBUTE=2;
+CREATE INDEX orders_fk1 on orders (o_custkey) DISTRIBUTE=1;
+CREATE INDEX idx_orderstatus on orders (o_orderstatus) DISTRIBUTE=1;
+CREATE INDEX idx_orderdate on orders (o_orderdate) DISTRIBUTE=1;
 
 CREATE TABLE lineitem (
     l_orderkey      integer        NOT NULL,
@@ -119,7 +128,16 @@ CREATE TABLE lineitem (
     l_shipinstruct  char(25)       NOT NULL,
     l_shipmode      char(10)       NOT NULL,
     l_comment       varchar(44)    NOT NULL,
-    PRIMARY KEY (l_orderkey, l_linenumber) /*$ DISTRIBUTE=2 */
-);
-CREATE INDEX l_ok ON lineitem (l_orderkey ASC);
-CREATE INDEX l_pk_sk ON lineitem (l_partkey ASC, l_suppkey ASC) DISTRIBUTE=2;
+    PRIMARY KEY (l_orderkey, l_linenumber) /*$ DISTRIBUTE=2 */,
+    CONSTRAINT lineitem_ibfk_2 FOREIGN KEY (l_partkey, l_suppkey) REFERENCES partsupp (ps_partkey, ps_suppkey) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT lineitem_ibfk_1 FOREIGN KEY (l_orderkey) REFERENCES orders (o_orderkey) ON DELETE RESTRICT ON UPDATE RESTRICT
+) CHARACTER SET utf8
+;
+CREATE INDEX lineitem_fk2 on lineitem (l_partkey, l_suppkey) DISTRIBUTE=2;
+CREATE INDEX idx_shipmode on lineitem (l_shipmode) DISTRIBUTE=1;
+CREATE INDEX idx_shipinstruct on lineitem (l_shipinstruct) DISTRIBUTE=1;
+CREATE INDEX idx_shipdate on lineitem (l_shipdate) DISTRIBUTE=1;
+CREATE INDEX idx_returnflag on lineitem (l_returnflag) DISTRIBUTE=1;
+CREATE INDEX idx_receiptdate on lineitem (l_receiptdate) DISTRIBUTE=1;
+CREATE INDEX idx_quantity on lineitem (l_quantity) DISTRIBUTE=1;
+CREATE INDEX idx_discount on lineitem (l_discount) DISTRIBUTE=1;
