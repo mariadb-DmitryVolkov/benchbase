@@ -46,6 +46,3 @@ CREATE TABLE `supplier` (
   KEY `su_nationkey` (`su_nationkey`) /*$ DISTRIBUTE=1 */,
   CONSTRAINT `supplier_ibfk_1` FOREIGN KEY (`su_nationkey`) REFERENCES `nation` (`n_nationkey`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) CHARACTER SET utf8;
-
-/* add index to help query 17 */
-ALTER TABLE order_line ADD INDEX `idx_ol_i_id` (`ol_i_id`);
