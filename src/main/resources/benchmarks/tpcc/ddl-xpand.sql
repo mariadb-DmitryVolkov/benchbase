@@ -1,5 +1,4 @@
 
-
 DROP TABLE IF EXISTS history;
 DROP TABLE IF EXISTS new_order;
 DROP TABLE IF EXISTS order_line;
@@ -38,13 +37,11 @@ KEY `idx_customer_name` (`c_w_id`,`c_d_id`,`c_last`,`c_first`) /*$ DISTRIBUTE=1 
 ) CHARACTER SET utf8
 ;
 
-delimiter //
 CREATE TRIGGER customer_rand_skew_id
 BEFORE INSERT ON customer FOR EACH ROW
 BEGIN
     SET NEW.c_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END; //
-delimiter ;
+END;
 
 CREATE TABLE `district` (
     `d_skew_id` int(11) not null DEFAULT 0,
@@ -63,13 +60,11 @@ CREATE TABLE `district` (
 ) CHARACTER SET utf8
 ;
 
-delimiter //
 CREATE TRIGGER district_rand_skew_id
 BEFORE INSERT ON district FOR EACH ROW
 BEGIN
     SET NEW.d_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END; //
-delimiter ;
+END;
 
 CREATE TABLE `history` (
     `h_c_id` int(11) not null,
@@ -94,13 +89,12 @@ CREATE TABLE `item` (
     PRIMARY KEY (`i_skew_id`, `i_id`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
 ;
-delimiter //
+
 CREATE TRIGGER item_rand_skew_id
 BEFORE INSERT ON item FOR EACH ROW
 BEGIN
     SET NEW.i_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END; //
-delimiter ;
+END;
 
 CREATE TABLE `new_order` (
    `no_skew_id` int(11) not null DEFAULT 0,
@@ -111,13 +105,11 @@ CREATE TABLE `new_order` (
 ) CHARACTER SET utf8
 ;
 
-delimiter //
 CREATE TRIGGER new_order_rand_skew_id
 BEFORE INSERT ON new_order FOR EACH ROW
 BEGIN
     SET NEW.no_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END; //
-delimiter ;
+END;
 
 CREATE TABLE `oorder` (
    `o_skew_id` int(11) not null DEFAULT 0,
@@ -134,13 +126,12 @@ CREATE TABLE `oorder` (
 ) CHARACTER SET utf8
 ;
 
-delimiter //
+
 CREATE TRIGGER oorder_rand_skew_id
 BEFORE INSERT ON oorder FOR EACH ROW
 BEGIN
     SET NEW.o_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END; //
-delimiter ;
+END;
 
 
 CREATE TABLE `order_line` (
@@ -159,13 +150,11 @@ CREATE TABLE `order_line` (
 ) CHARACTER SET utf8
 ;
 
-delimiter //
 CREATE TRIGGER order_line_rand_skew_id
 BEFORE INSERT ON order_line FOR EACH ROW
 BEGIN
     SET NEW.ol_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END; //
-delimiter ;
+END;
 
 CREATE TABLE `stock` (
    `s_skew_id` int(11) not null DEFAULT 0,
@@ -191,13 +180,12 @@ CREATE TABLE `stock` (
 ) CHARACTER SET utf8
 ;
 
-delimiter //
+
 CREATE TRIGGER stock_rand_skew_id
 BEFORE INSERT ON stock FOR EACH ROW
 BEGIN
     SET NEW.s_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END; //
-delimiter ;
+END;
 
 CREATE TABLE `warehouse` (
    `w_skew_id` int(11) not null DEFAULT 0,
@@ -214,13 +202,11 @@ CREATE TABLE `warehouse` (
 ) CHARACTER SET utf8
 ;
 
-delimiter //
 CREATE TRIGGER warehouse_rand_skew_id
 BEFORE INSERT ON warehouse FOR EACH ROW
 BEGIN
     SET NEW.w_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END; //
-delimiter ;
+END;
 
 ALTER TABLE stock ADD CONSTRAINT FOREIGN KEY (s_w_id) REFERENCES warehouse (w_id) ON DELETE CASCADE;
 ALTER TABLE stock ADD CONSTRAINT FOREIGN KEY (s_i_id) REFERENCES item (i_id) ON DELETE CASCADE;
