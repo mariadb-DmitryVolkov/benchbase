@@ -43,8 +43,8 @@ public class Q3 extends GenericQuery {
                c_mktsegment = ?
                AND c_custkey = o_custkey
                AND l_orderkey = o_orderkey
-               AND o_orderdate < DATE ?
-               AND l_shipdate > DATE ?
+               AND o_orderdate < DATE(?)
+               AND l_shipdate > DATE(?)
             GROUP BY
                l_orderkey,
                o_orderdate,

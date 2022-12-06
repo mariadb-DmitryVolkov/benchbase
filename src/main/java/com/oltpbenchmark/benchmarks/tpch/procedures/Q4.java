@@ -34,8 +34,8 @@ public class Q4 extends GenericQuery {
             FROM
                orders
             WHERE
-               o_orderdate >= DATE ?
-               AND o_orderdate < DATE ? + INTERVAL '3' MONTH
+               o_orderdate >= DATE(?)
+               AND o_orderdate < DATE(?) + INTERVAL '3' MONTH
                AND EXISTS
                (
                   SELECT

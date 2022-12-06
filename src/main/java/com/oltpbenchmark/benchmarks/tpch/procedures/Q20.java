@@ -61,8 +61,8 @@ public class Q20 extends GenericQuery {
                      WHERE
                         l_partkey = ps_partkey
                         AND l_suppkey = ps_suppkey
-                        AND l_shipdate >= DATE ?
-                        AND l_shipdate < DATE ? + INTERVAL '1' YEAR )
+                        AND l_shipdate >= DATE(?)
+                        AND l_shipdate < DATE(?) + INTERVAL '1' YEAR )
                )
                AND s_nationkey = n_nationkey
                AND n_name = ?

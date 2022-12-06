@@ -60,8 +60,8 @@ public class Q12 extends GenericQuery {
                 AND l_shipmode IN (?, ?)
                 AND l_commitdate < l_receiptdate
                 AND l_shipdate < l_commitdate
-                AND l_receiptdate >= DATE ?
-                AND l_receiptdate < DATE ? + INTERVAL '1' YEAR
+                AND l_receiptdate >= DATE(?)
+                AND l_receiptdate < DATE(?) + INTERVAL '1' YEAR
             GROUP BY
                 l_shipmode
             ORDER BY

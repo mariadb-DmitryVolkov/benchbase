@@ -35,8 +35,8 @@ public class Q15 extends GenericQuery {
             FROM
                lineitem
             WHERE
-               l_shipdate >= DATE ?
-               AND l_shipdate < DATE ? + INTERVAL '3' MONTH
+               l_shipdate >= DATE(?)
+               AND l_shipdate < DATE(?) + INTERVAL '3' MONTH
             GROUP BY
                l_suppkey
             """

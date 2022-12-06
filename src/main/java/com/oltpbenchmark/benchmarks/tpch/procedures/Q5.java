@@ -48,8 +48,8 @@ public class Q5 extends GenericQuery {
                AND s_nationkey = n_nationkey
                AND n_regionkey = r_regionkey
                AND r_name = ?
-               AND o_orderdate >= DATE ?
-               AND o_orderdate < DATE ? + INTERVAL '1' YEAR
+               AND o_orderdate >= DATE(?)
+               AND o_orderdate < DATE(?) + INTERVAL '1' YEAR
             GROUP BY
                n_name
             ORDER BY

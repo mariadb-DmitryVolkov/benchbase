@@ -45,8 +45,8 @@ public class Q10 extends GenericQuery {
             WHERE
                c_custkey = o_custkey
                AND l_orderkey = o_orderkey
-               AND o_orderdate >= DATE ?
-               AND o_orderdate < DATE ? + INTERVAL '3' MONTH
+               AND o_orderdate >= DATE(?)
+               AND o_orderdate < DATE(?) + INTERVAL '3' MONTH
                AND l_returnflag = 'R'
                AND c_nationkey = n_nationkey
             GROUP BY
