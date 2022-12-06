@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS item;
 DROP TABLE IF EXISTS warehouse;
 
 CREATE TABLE `customer` (
+   `c_skew_id` int(11) not null,
    `c_w_id` int(11) not null,
    `c_d_id` int(11) not null,
    `c_id` int(11) not null,
@@ -32,12 +33,21 @@ CREATE TABLE `customer` (
    `c_since` timestamp not null default CURRENT_TIMESTAMP,
    `c_middle` char(2) CHARACTER SET utf8 not null,
    `c_data` varchar(500) CHARACTER SET utf8 not null,
-PRIMARY KEY (`c_w_id`,`c_d_id`,`c_id`) /*$ DISTRIBUTE=3 */,
-KEY `idx_customer_name` (`c_w_id`,`c_d_id`,`c_last`,`c_first`) /*$ DISTRIBUTE=3 */
+PRIMARY KEY (`c_skew_id`,`c_w_id`,`c_d_id`,`c_id`) /*$ DISTRIBUTE=1 */,
+KEY `idx_customer_name` (`c_w_id`,`c_d_id`,`c_last`,`c_first`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
 ;
 
+CREATE TRIGGER customer_rand_skew_id
+BEFORE INSERT ON customer FOR EACH ROW
+BEGIN
+    NEW.c_skew_id := IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+END
+;
+
+
 CREATE TABLE `district` (
+    `d_skew_id` int(11) not null,
     `d_w_id` int(11) not null,
     `d_id` int(11) not null,
     `d_ytd` decimal(12,2) not null,
@@ -49,8 +59,15 @@ CREATE TABLE `district` (
     `d_city` varchar(20) CHARACTER SET utf8 not null,
     `d_state` char(2) CHARACTER SET utf8 not null,
     `d_zip` char(9) CHARACTER SET utf8 not null,
-    PRIMARY KEY (`d_w_id`,`d_id`) /*$ DISTRIBUTE=2 */
+    PRIMARY KEY (`d_skew_id`, `d_w_id`,`d_id`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
+;
+
+CREATE TRIGGER district_rand_skew_id
+BEFORE INSERT ON district FOR EACH ROW
+BEGIN
+    NEW.d_skew_id := IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+END
 ;
 
 CREATE TABLE `history` (
@@ -67,24 +84,41 @@ CREATE TABLE `history` (
 ;
 
 CREATE TABLE `item` (
+   `i_skew_id` int(11) not null,
    `i_id` int(11) not null,
    `i_name` varchar(24) CHARACTER SET utf8 not null,
    `i_price` decimal(5,2) not null,
    `i_data` varchar(50) CHARACTER SET utf8 not null,
    `i_im_id` int(11) not null,
-    PRIMARY KEY (`i_id`) /*$ DISTRIBUTE=1 */
+    PRIMARY KEY (`i_skew_id`, `i_id`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
+;
+
+CREATE TRIGGER item_rand_skew_id
+BEFORE INSERT ON item FOR EACH ROW
+BEGIN
+    NEW.i_skew_id := IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+END
 ;
 
 CREATE TABLE `new_order` (
+   `no_skew_id` int(11) not null,
    `no_w_id` int(11) not null,
    `no_d_id` int(11) not null,
    `no_o_id` int(11) not null,
-   PRIMARY KEY (`no_w_id`,`no_d_id`,`no_o_id`) /*$ DISTRIBUTE=3 */
+   PRIMARY KEY (`no_skew_id`, `no_w_id`,`no_d_id`,`no_o_id`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
 ;
 
+CREATE TRIGGER new_order_rand_skew_id
+BEFORE INSERT ON new_order FOR EACH ROW
+BEGIN
+    NEW.no_skew_id := IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+END
+;
+
 CREATE TABLE `oorder` (
+   `o_skew_id` int(11) not null,
    `o_w_id` int(11) not null,
    `o_d_id` int(11) not null,
    `o_id` int(11) not null,
@@ -93,13 +127,21 @@ CREATE TABLE `oorder` (
    `o_ol_cnt` int(11) not null,
    `o_all_local` int(11) not null,
    `o_entry_d` timestamp not null default CURRENT_TIMESTAMP,
-   PRIMARY KEY (`o_w_id`,`o_d_id`,`o_id`) /*$ DISTRIBUTE=3 */,
-  KEY `idx_order` (`o_w_id`,`o_d_id`,`o_c_id`,`o_id`) /*$ DISTRIBUTE=3 */
+   PRIMARY KEY (`o_skew_id`, `o_w_id`,`o_d_id`,`o_id`) /*$ DISTRIBUTE=1 */,
+  KEY `idx_order` (`o_w_id`,`o_d_id`,`o_c_id`,`o_id`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
+;
+
+CREATE TRIGGER oorder_rand_skew_id
+BEFORE INSERT ON oorder FOR EACH ROW
+BEGIN
+    NEW.o_skew_id := IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+END
 ;
 
 
 CREATE TABLE `order_line` (
+   `ol_skew_id` int(11) not null,
    `ol_w_id` int(11) not null,
    `ol_d_id` int(11) not null,
    `ol_o_id` int(11) not null,
@@ -110,11 +152,19 @@ CREATE TABLE `order_line` (
    `ol_supply_w_id` int(11) not null,
    `ol_quantity` int(11) not null,
    `ol_dist_info` char(24) CHARACTER SET utf8 not null,
-   PRIMARY KEY (`ol_w_id`,`ol_d_id`,`ol_o_id`,`ol_number`) /*$ DISTRIBUTE=2 */
+   PRIMARY KEY (`ol_skew_id`, `ol_w_id`,`ol_d_id`,`ol_o_id`,`ol_number`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
 ;
 
+CREATE TRIGGER order_line_rand_skew_id
+BEFORE INSERT ON order_line FOR EACH ROW
+BEGIN
+    NEW.ol_skew_id := IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+END
+;
+
 CREATE TABLE `stock` (
+   `s_skew_id` int(11) not null,
    `s_w_id` int(11) not null,
    `s_i_id` int(11) not null,
    `s_quantity` int(11) not null,
@@ -132,12 +182,20 @@ CREATE TABLE `stock` (
    `s_dist_08` char(24) CHARACTER SET utf8 not null,
    `s_dist_09` char(24) CHARACTER SET utf8 not null,
    `s_dist_10` char(24) CHARACTER SET utf8 not null,
-   PRIMARY KEY (`s_w_id`,`s_i_id`) /*$ DISTRIBUTE=2 */,
+   PRIMARY KEY (`s_skew_id`, `s_w_id`,`s_i_id`) /*$ DISTRIBUTE=1 */,
    KEY `idx_stock` (`s_i_id`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
 ;
 
+CREATE TRIGGER stock_rand_skew_id
+BEFORE INSERT ON stock FOR EACH ROW
+BEGIN
+    NEW.s_skew_id := IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+END
+;
+
 CREATE TABLE `warehouse` (
+   `w_skew_id` int(11) not null,
    `w_id` int(11) not null,
    `w_ytd` decimal(12,2) not null,
    `w_tax` decimal(4,4) not null,
@@ -147,8 +205,15 @@ CREATE TABLE `warehouse` (
    `w_city` varchar(20) CHARACTER SET utf8 not null,
    `w_state` char(2) CHARACTER SET utf8 not null,
    `w_zip` char(9) CHARACTER SET utf8 not null,
-   PRIMARY KEY (`w_id`) /*$ DISTRIBUTE=1 */
+   PRIMARY KEY (`w_skew_id`, `w_id`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
+;
+
+CREATE TRIGGER warehouse_rand_skew_id
+BEFORE INSERT ON warehouse FOR EACH ROW
+BEGIN
+    NEW.w_skew_id := IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+END
 ;
 
 ALTER TABLE stock ADD CONSTRAINT FOREIGN KEY (s_w_id) REFERENCES warehouse (w_id) ON DELETE CASCADE;
