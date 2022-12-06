@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS item;
 DROP TABLE IF EXISTS warehouse;
 
 CREATE TABLE `customer` (
-   `c_skew_id` int(11) not null,
+   `c_skew_id` int(11) not null DEFAULT 0,
    `c_w_id` int(11) not null,
    `c_d_id` int(11) not null,
    `c_id` int(11) not null,
@@ -47,7 +47,7 @@ END
 
 
 CREATE TABLE `district` (
-    `d_skew_id` int(11) not null,
+    `d_skew_id` int(11) not null DEFAULT 0,
     `d_w_id` int(11) not null,
     `d_id` int(11) not null,
     `d_ytd` decimal(12,2) not null,
@@ -84,7 +84,7 @@ CREATE TABLE `history` (
 ;
 
 CREATE TABLE `item` (
-   `i_skew_id` int(11) not null,
+   `i_skew_id` int(11) not null DEFAULT 0,
    `i_id` int(11) not null,
    `i_name` varchar(24) CHARACTER SET utf8 not null,
    `i_price` decimal(5,2) not null,
@@ -102,7 +102,7 @@ END
 ;
 
 CREATE TABLE `new_order` (
-   `no_skew_id` int(11) not null,
+   `no_skew_id` int(11) not null DEFAULT 0,
    `no_w_id` int(11) not null,
    `no_d_id` int(11) not null,
    `no_o_id` int(11) not null,
@@ -118,7 +118,7 @@ END
 ;
 
 CREATE TABLE `oorder` (
-   `o_skew_id` int(11) not null,
+   `o_skew_id` int(11) not null DEFAULT 0,
    `o_w_id` int(11) not null,
    `o_d_id` int(11) not null,
    `o_id` int(11) not null,
@@ -141,7 +141,7 @@ END
 
 
 CREATE TABLE `order_line` (
-   `ol_skew_id` int(11) not null,
+   `ol_skew_id` int(11) not null DEFAULT 0,
    `ol_w_id` int(11) not null,
    `ol_d_id` int(11) not null,
    `ol_o_id` int(11) not null,
@@ -164,7 +164,7 @@ END
 ;
 
 CREATE TABLE `stock` (
-   `s_skew_id` int(11) not null,
+   `s_skew_id` int(11) not null DEFAULT 0,
    `s_w_id` int(11) not null,
    `s_i_id` int(11) not null,
    `s_quantity` int(11) not null,
@@ -195,7 +195,7 @@ END
 ;
 
 CREATE TABLE `warehouse` (
-   `w_skew_id` int(11) not null,
+   `w_skew_id` int(11) not null DEFAULT 0,
    `w_id` int(11) not null,
    `w_ytd` decimal(12,2) not null,
    `w_tax` decimal(4,4) not null,
