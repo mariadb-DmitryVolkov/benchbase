@@ -20,6 +20,7 @@ package com.oltpbenchmark.benchmarks.tpcc.pojo;
 
 public class Item {
 
+    public int i_skew_id; // skew primary key
     public int i_id; // PRIMARY KEY
     public int i_im_id;
     public double i_price;

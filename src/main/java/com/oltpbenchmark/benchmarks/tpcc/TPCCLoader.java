@@ -155,6 +155,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
             for (int i = 1; i <= itemCount; i++) {
 
                 Item item = new Item();
+                item.i_skew_id = 0;
                 item.i_id = i;
                 item.i_name = TPCCUtil.randomStr(TPCCUtil.randomNumber(14, 24, benchmark.rng()));
                 item.i_price = TPCCUtil.randomNumber(100, 10000, benchmark.rng()) / 100.0;
@@ -175,6 +176,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
                 item.i_im_id = TPCCUtil.randomNumber(1, 10000, benchmark.rng());
 
                 int idx = 1;
+                itemPrepStmt.setLong(idx++, item.i_skew_id);
                 itemPrepStmt.setLong(idx++, item.i_id);
                 itemPrepStmt.setString(idx++, item.i_name);
                 itemPrepStmt.setDouble(idx++, item.i_price);
@@ -208,6 +210,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
         try (PreparedStatement whsePrepStmt = getInsertStatement(conn, TPCCConstants.TABLENAME_WAREHOUSE)) {
             Warehouse warehouse = new Warehouse();
 
+            warehouse.w_skew_id = 0;
             warehouse.w_id = w_id;
             warehouse.w_ytd = 300000;
 
@@ -221,6 +224,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
             warehouse.w_zip = "123456789";
 
             int idx = 1;
+            whsePrepStmt.setLong(idx++, warehouse.w_skew_id);
             whsePrepStmt.setLong(idx++, warehouse.w_id);
             whsePrepStmt.setDouble(idx++, warehouse.w_ytd);
             whsePrepStmt.setDouble(idx++, warehouse.w_tax);
@@ -246,6 +250,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
 
             for (int i = 1; i <= numItems; i++) {
                 Stock stock = new Stock();
+                stock.s_skew_id = 0;
                 stock.s_i_id = i;
                 stock.s_w_id = w_id;
                 stock.s_quantity = TPCCUtil.randomNumber(10, 100, benchmark.rng());
@@ -268,6 +273,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
                 }
 
                 int idx = 1;
+                stockPreparedStatement.setLong(idx++, stock.s_skew_id);
                 stockPreparedStatement.setLong(idx++, stock.s_w_id);
                 stockPreparedStatement.setLong(idx++, stock.s_i_id);
                 stockPreparedStatement.setLong(idx++, stock.s_quantity);
@@ -310,6 +316,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
 
             for (int d = 1; d <= districtsPerWarehouse; d++) {
                 District district = new District();
+                district.d_skew_id = d;
                 district.d_id = d;
                 district.d_w_id = w_id;
                 district.d_ytd = 30000;
@@ -326,6 +333,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
                 district.d_zip = "123456789";
 
                 int idx = 1;
+                distPrepStmt.setLong(idx++, district.d_skew_id);
                 distPrepStmt.setLong(idx++, district.d_w_id);
                 distPrepStmt.setLong(idx++, district.d_id);
                 distPrepStmt.setDouble(idx++, district.d_ytd);
@@ -357,6 +365,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
                     Timestamp sysdate = new Timestamp(System.currentTimeMillis());
 
                     Customer customer = new Customer();
+                    customer.c_skew_id = 0;
                     customer.c_id = c;
                     customer.c_d_id = d;
                     customer.c_w_id = w_id;
@@ -394,6 +403,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
                     customer.c_data = TPCCUtil.randomStr(TPCCUtil.randomNumber(300, 500, benchmark.rng()));
 
                     int idx = 1;
+                    custPrepStmt.setLong(idx++, customer.c_skew_id);
                     custPrepStmt.setLong(idx++, customer.c_w_id);
                     custPrepStmt.setLong(idx++, customer.c_d_id);
                     custPrepStmt.setLong(idx++, customer.c_id);
@@ -446,6 +456,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
                     Timestamp sysdate = new Timestamp(System.currentTimeMillis());
 
                     History history = new History();
+                    history.h_skew_id = c;
                     history.h_c_id = c;
                     history.h_c_d_id = d;
                     history.h_c_w_id = w_id;
@@ -457,6 +468,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
 
 
                     int idx = 1;
+                    histPrepStmt.setInt(idx++, history.h_skew_id);
                     histPrepStmt.setInt(idx++, history.h_c_id);
                     histPrepStmt.setInt(idx++, history.h_c_d_id);
                     histPrepStmt.setInt(idx++, history.h_c_w_id);
@@ -511,6 +523,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
                 for (int c = 1; c <= customersPerDistrict; c++) {
 
                     Oorder oorder = new Oorder();
+                    oorder.o_skew_id = 0;
                     oorder.o_id = c;
                     oorder.o_w_id = w_id;
                     oorder.o_d_id = d;
@@ -528,6 +541,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
 
 
                     int idx = 1;
+                    openOrderStatement.setInt(idx++, oorder.o_skew_id);
                     openOrderStatement.setInt(idx++, oorder.o_w_id);
                     openOrderStatement.setInt(idx++, oorder.o_d_id);
                     openOrderStatement.setInt(idx++, oorder.o_id);
@@ -588,11 +602,13 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
                     // with NO_O_ID between 2,101 and 3,000)
                     if (c >= FIRST_UNPROCESSED_O_ID) {
                         NewOrder new_order = new NewOrder();
+                        new_order.no_skew_id = 0;
                         new_order.no_w_id = w_id;
                         new_order.no_d_id = d;
                         new_order.no_o_id = c;
 
                         int idx = 1;
+                        newOrderStatement.setInt(idx++, new_order.no_skew_id);
                         newOrderStatement.setInt(idx++, new_order.no_w_id);
                         newOrderStatement.setInt(idx++, new_order.no_d_id);
                         newOrderStatement.setInt(idx, new_order.no_o_id);
@@ -633,6 +649,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
 
                     for (int l = 1; l <= count; l++) {
                         OrderLine order_line = new OrderLine();
+                        order_line.ol_skew_id = 0;
                         order_line.ol_w_id = w_id;
                         order_line.ol_d_id = d;
                         order_line.ol_o_id = c;
@@ -651,6 +668,7 @@ public class TPCCLoader extends Loader<TPCCBenchmark> {
                         order_line.ol_dist_info = TPCCUtil.randomStr(24);
 
                         int idx = 1;
+                        orderLineStatement.setInt(idx++, order_line.ol_skew_id);
                         orderLineStatement.setInt(idx++, order_line.ol_w_id);
                         orderLineStatement.setInt(idx++, order_line.ol_d_id);
                         orderLineStatement.setInt(idx++, order_line.ol_o_id);

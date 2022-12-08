@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 
 public class Oorder {
 
+    public int o_skew_id;
     public int o_id;
     public int o_w_id;
     public int o_d_id;

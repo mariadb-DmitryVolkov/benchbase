@@ -22,6 +22,7 @@ import java.io.Serializable;
 
 public class Stock implements Serializable {
 
+    public int s_skew_id; // PRIMARY KEY 3
     public int s_i_id; // PRIMARY KEY 2
     public int s_w_id; // PRIMARY KEY 1
     public int s_order_cnt;

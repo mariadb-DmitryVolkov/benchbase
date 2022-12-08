@@ -23,6 +23,7 @@ import java.util.Objects;
 
 public class Customer {
 
+    public int c_skew_id;
     public int c_id;
     public int c_d_id;
     public int c_w_id;

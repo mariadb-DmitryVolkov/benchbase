@@ -39,9 +39,7 @@ KEY `idx_customer_name` (`c_w_id`,`c_d_id`,`c_last`,`c_first`) /*$ DISTRIBUTE=1 
 
 CREATE TRIGGER customer_rand_skew_id
 BEFORE INSERT ON customer FOR EACH ROW
-BEGIN
-    SET NEW.c_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END;
+SET NEW.c_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
 
 CREATE TABLE `district` (
     `d_skew_id` int(11) not null DEFAULT 0,
@@ -62,11 +60,11 @@ CREATE TABLE `district` (
 
 CREATE TRIGGER district_rand_skew_id
 BEFORE INSERT ON district FOR EACH ROW
-BEGIN
-    SET NEW.d_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END;
+SET NEW.d_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+
 
 CREATE TABLE `history` (
+    `h_skew_id` int(11) not null DEFAULT 0,
     `h_c_id` int(11) not null,
     `h_c_d_id` int(11) not null,
     `h_c_w_id` int(11) not null,
@@ -75,9 +73,14 @@ CREATE TABLE `history` (
     `h_date` timestamp not null default CURRENT_TIMESTAMP,
     `h_amount` decimal(6,2) not null,
     `h_data` varchar(24) CHARACTER SET utf8 not null,
-    KEY `h_w_id` (`h_w_id`,`h_d_id`) /*$ DISTRIBUTE=1 */
+    KEY `h_w_id` (`h_skew_id`, `h_w_id`,`h_d_id`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
 ;
+
+CREATE TRIGGER history_rand_skew_id
+BEFORE INSERT ON history FOR EACH ROW
+SET NEW.h_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+
 
 CREATE TABLE `item` (
    `i_skew_id` int(11) not null DEFAULT 0,
@@ -92,9 +95,8 @@ CREATE TABLE `item` (
 
 CREATE TRIGGER item_rand_skew_id
 BEFORE INSERT ON item FOR EACH ROW
-BEGIN
-    SET NEW.i_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END;
+SET NEW.i_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+
 
 CREATE TABLE `new_order` (
    `no_skew_id` int(11) not null DEFAULT 0,
@@ -107,9 +109,8 @@ CREATE TABLE `new_order` (
 
 CREATE TRIGGER new_order_rand_skew_id
 BEFORE INSERT ON new_order FOR EACH ROW
-BEGIN
-    SET NEW.no_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END;
+SET NEW.no_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+
 
 CREATE TABLE `oorder` (
    `o_skew_id` int(11) not null DEFAULT 0,
@@ -126,12 +127,9 @@ CREATE TABLE `oorder` (
 ) CHARACTER SET utf8
 ;
 
-
 CREATE TRIGGER oorder_rand_skew_id
 BEFORE INSERT ON oorder FOR EACH ROW
-BEGIN
-    SET NEW.o_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END;
+SET NEW.o_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
 
 
 CREATE TABLE `order_line` (
@@ -152,9 +150,8 @@ CREATE TABLE `order_line` (
 
 CREATE TRIGGER order_line_rand_skew_id
 BEFORE INSERT ON order_line FOR EACH ROW
-BEGIN
-    SET NEW.ol_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END;
+SET NEW.ol_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+
 
 CREATE TABLE `stock` (
    `s_skew_id` int(11) not null DEFAULT 0,
@@ -180,12 +177,10 @@ CREATE TABLE `stock` (
 ) CHARACTER SET utf8
 ;
 
-
 CREATE TRIGGER stock_rand_skew_id
 BEFORE INSERT ON stock FOR EACH ROW
-BEGIN
-    SET NEW.s_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END;
+SET NEW.s_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
+
 
 CREATE TABLE `warehouse` (
    `w_skew_id` int(11) not null DEFAULT 0,
@@ -204,26 +199,28 @@ CREATE TABLE `warehouse` (
 
 CREATE TRIGGER warehouse_rand_skew_id
 BEFORE INSERT ON warehouse FOR EACH ROW
-BEGIN
-    SET NEW.w_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
-END;
+SET NEW.w_skew_id = IF(RAND() > .5, FLOOR(RAND() * 10000) + 1, 0);
 
+
+-- Add constraints to make sure IDs are unique
+ALTER TABLE warehouse ADD CONSTRAINT UNIQUE (w_id);
+ALTER TABLE district ADD CONSTRAINT UNIQUE (d_w_id, d_id);
+ALTER TABLE item ADD CONSTRAINT UNIQUE (i_id);
+ALTER TABLE customer ADD CONSTRAINT UNIQUE (c_w_id, c_d_id, c_id);
+ALTER TABLE stock ADD CONSTRAINT UNIQUE (s_w_id, s_i_id);
+ALTER TABLE oorder ADD CONSTRAINT UNIQUE (o_w_id, o_d_id, o_id);
+ALTER TABLE new_order ADD CONSTRAINT UNIQUE (no_w_id, no_d_id, no_o_id);
+ALTER TABLE order_line ADD CONSTRAINT UNIQUE (ol_w_id, ol_d_id, ol_o_id, ol_number);
+
+
+-- Add foreign keys to tables
 ALTER TABLE stock ADD CONSTRAINT FOREIGN KEY (s_w_id) REFERENCES warehouse (w_id) ON DELETE CASCADE;
 ALTER TABLE stock ADD CONSTRAINT FOREIGN KEY (s_i_id) REFERENCES item (i_id) ON DELETE CASCADE;
-
 ALTER TABLE district ADD FOREIGN KEY (d_w_id) REFERENCES warehouse (w_id) ON DELETE CASCADE;
-
-ALTER TABLE  customer ADD FOREIGN KEY (c_w_id, c_d_id) REFERENCES district (d_w_id, d_id) ON DELETE CASCADE;
-
-
+ALTER TABLE customer ADD FOREIGN KEY (c_w_id, c_d_id) REFERENCES district (d_w_id, d_id) ON DELETE CASCADE;
 ALTER TABLE history ADD FOREIGN KEY (h_c_w_id, h_c_d_id, h_c_id) REFERENCES customer (c_w_id, c_d_id, c_id) ON DELETE CASCADE;
 ALTER TABLE history ADD FOREIGN KEY (h_w_id, h_d_id) REFERENCES district (d_w_id, d_id) ON DELETE CASCADE;
-
-
 ALTER TABLE oorder ADD FOREIGN KEY (o_w_id, o_d_id, o_c_id) REFERENCES customer (c_w_id, c_d_id, c_id) ON DELETE CASCADE;
-
 ALTER TABLE new_order ADD FOREIGN KEY (no_w_id, no_d_id, no_o_id) REFERENCES oorder (o_w_id, o_d_id, o_id) ON DELETE CASCADE;
-
-
 ALTER TABLE order_line add FOREIGN KEY (ol_w_id, ol_d_id, ol_o_id) REFERENCES oorder (o_w_id, o_d_id, o_id) ON DELETE CASCADE;
 ALTER TABLE order_line add FOREIGN KEY (ol_supply_w_id, ol_i_id) REFERENCES stock (s_w_id, s_i_id) ON DELETE CASCADE;

@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 
 public class OrderLine {
 
+    public int ol_skew_id;
     public int ol_w_id;
     public int ol_d_id;
     public int ol_o_id;

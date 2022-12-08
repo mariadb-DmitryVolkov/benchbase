@@ -22,6 +22,7 @@ import java.io.Serializable;
 
 public class NewOrder implements Serializable {
 
+    public int no_skew_id;
     public int no_w_id;
     public int no_d_id;
     public int no_o_id;

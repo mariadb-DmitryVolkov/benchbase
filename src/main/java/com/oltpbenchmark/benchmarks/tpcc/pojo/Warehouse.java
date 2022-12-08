@@ -22,6 +22,7 @@ import java.io.Serializable;
 
 public class Warehouse implements Serializable {
 
+    public int w_skew_id; // skew PRIMARY KEY
     public int w_id; // PRIMARY KEY
     public float w_ytd;
     public double w_tax;
