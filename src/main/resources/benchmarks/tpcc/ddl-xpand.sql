@@ -32,8 +32,8 @@ CREATE TABLE `customer` (
    `c_since` timestamp not null default CURRENT_TIMESTAMP,
    `c_middle` char(2) CHARACTER SET utf8 not null,
    `c_data` varchar(500) CHARACTER SET utf8 not null,
-PRIMARY KEY (`c_w_id`,`c_d_id`,`c_id`) /*$ DISTRIBUTE=3 */,
-KEY `idx_customer_name` (`c_w_id`,`c_d_id`,`c_last`,`c_first`) /*$ DISTRIBUTE=3 */
+PRIMARY KEY (`c_w_id`,`c_d_id`,`c_id`) /*$ DISTRIBUTE=1 */,
+KEY `idx_customer_name` (`c_w_id`,`c_d_id`,`c_last`,`c_first`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
 ;
 
@@ -49,7 +49,7 @@ CREATE TABLE `district` (
     `d_city` varchar(20) CHARACTER SET utf8 not null,
     `d_state` char(2) CHARACTER SET utf8 not null,
     `d_zip` char(9) CHARACTER SET utf8 not null,
-    PRIMARY KEY (`d_w_id`,`d_id`) /*$ DISTRIBUTE=2 */
+    PRIMARY KEY (`d_w_id`,`d_id`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
 ;
 
@@ -80,7 +80,7 @@ CREATE TABLE `new_order` (
    `no_w_id` int(11) not null,
    `no_d_id` int(11) not null,
    `no_o_id` int(11) not null,
-   PRIMARY KEY (`no_w_id`,`no_d_id`,`no_o_id`) /*$ DISTRIBUTE=3 */
+   PRIMARY KEY (`no_w_id`,`no_d_id`,`no_o_id`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
 ;
 
@@ -93,8 +93,8 @@ CREATE TABLE `oorder` (
    `o_ol_cnt` int(11) not null,
    `o_all_local` int(11) not null,
    `o_entry_d` timestamp not null default CURRENT_TIMESTAMP,
-   PRIMARY KEY (`o_w_id`,`o_d_id`,`o_id`) /*$ DISTRIBUTE=3 */,
-  KEY `idx_order` (`o_w_id`,`o_d_id`,`o_c_id`,`o_id`) /*$ DISTRIBUTE=3 */
+   PRIMARY KEY (`o_w_id`,`o_d_id`,`o_id`) /*$ DISTRIBUTE=1 */,
+  KEY `idx_order` (`o_w_id`,`o_d_id`,`o_c_id`,`o_id`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
 ;
 
@@ -110,7 +110,7 @@ CREATE TABLE `order_line` (
    `ol_supply_w_id` int(11) not null,
    `ol_quantity` int(11) not null,
    `ol_dist_info` char(24) CHARACTER SET utf8 not null,
-   PRIMARY KEY (`ol_w_id`,`ol_d_id`,`ol_o_id`,`ol_number`) /*$ DISTRIBUTE=2 */
+   PRIMARY KEY (`ol_w_id`,`ol_d_id`,`ol_o_id`,`ol_number`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
 ;
 
@@ -132,7 +132,7 @@ CREATE TABLE `stock` (
    `s_dist_08` char(24) CHARACTER SET utf8 not null,
    `s_dist_09` char(24) CHARACTER SET utf8 not null,
    `s_dist_10` char(24) CHARACTER SET utf8 not null,
-   PRIMARY KEY (`s_w_id`,`s_i_id`) /*$ DISTRIBUTE=2 */,
+   PRIMARY KEY (`s_w_id`,`s_i_id`) /*$ DISTRIBUTE=1 */,
    KEY `idx_stock` (`s_i_id`) /*$ DISTRIBUTE=1 */
 ) CHARACTER SET utf8
 ;
