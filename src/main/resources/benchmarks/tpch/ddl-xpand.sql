@@ -68,7 +68,7 @@ CREATE TABLE partsupp (
     ps_availqty   integer        NOT NULL,
     ps_supplycost decimal(15, 2) NOT NULL,
     ps_comment    varchar(199)   NOT NULL,
-    PRIMARY KEY (ps_partkey, ps_suppkey) /*$ DISTRIBUTE=2 */,
+    PRIMARY KEY (ps_partkey, ps_suppkey) /*$ DISTRIBUTE=1 */,
     CONSTRAINT partsupp_ibfk_1 FOREIGN KEY (ps_suppkey) REFERENCES supplier (s_suppkey) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT partsupp_ibfk_2 FOREIGN KEY (ps_partkey) REFERENCES part (p_partkey) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) CHARACTER SET utf8
@@ -128,7 +128,7 @@ CREATE TABLE lineitem (
     l_shipinstruct  char(25)       NOT NULL,
     l_shipmode      char(10)       NOT NULL,
     l_comment       varchar(44)    NOT NULL,
-    PRIMARY KEY (l_orderkey, l_linenumber) /*$ DISTRIBUTE=2 */,
+    PRIMARY KEY (l_orderkey, l_linenumber) /*$ DISTRIBUTE=1 */,
     CONSTRAINT lineitem_ibfk_2 FOREIGN KEY (l_partkey, l_suppkey) REFERENCES partsupp (ps_partkey, ps_suppkey) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT lineitem_ibfk_1 FOREIGN KEY (l_orderkey) REFERENCES orders (o_orderkey) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) CHARACTER SET utf8
