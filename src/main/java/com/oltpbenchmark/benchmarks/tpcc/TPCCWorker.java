@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException
 import java.util.Random;
 
 public class TPCCWorker extends Worker<TPCCBenchmark> {
@@ -61,7 +62,7 @@ public class TPCCWorker extends Worker<TPCCBenchmark> {
      * Executes a single TPCC transaction of type transactionType.
      */
     @Override
-    protected TransactionStatus executeWork(Connection conn, TransactionType nextTransaction) throws UserAbortException, SQLException {
+    protected TransactionStatus executeWork(Connection conn, TransactionType nextTransaction) throws UserAbortException, SQLNonTransientConnectionException, SQLException {
         try {
             TPCCProcedure proc = (TPCCProcedure) this.getProcedure(nextTransaction.getProcedureClass());
             proc.run(conn, gen, terminalWarehouseID, numWarehouses,
@@ -70,7 +71,17 @@ public class TPCCWorker extends Worker<TPCCBenchmark> {
             //fail gracefully
             LOG.error("We have been invoked with an INVALID transactionType?!", ex);
             throw new RuntimeException("Bad transaction type = " + nextTransaction);
+        } catch (SQLNonTransientConnectionException ex) {
+            LOG.error("SQLNonTransientConnectionException exception, attempting to re-initialize connection...", ex);
+            try {
+                this.conn = this.benchmark.makeConnection();
+                this.conn.setAutoCommit(false);
+                this.conn.setTransactionIsolation(this.configuration.getIsolationMode());
+            } catch (SQLException ex) {
+                throw new RuntimeException("Failed to connect to database.", ex);
+            }
         }
+
         return (TransactionStatus.SUCCESS);
     }
 
