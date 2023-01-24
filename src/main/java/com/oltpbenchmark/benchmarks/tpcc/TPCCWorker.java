@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.SQLNonTransientConnectionException
+import java.sql.SQLNonTransientConnectionException;
 import java.util.Random;
 
 public class TPCCWorker extends Worker<TPCCBenchmark> {
