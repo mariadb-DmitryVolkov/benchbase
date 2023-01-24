@@ -49,8 +49,8 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
     private final AtomicInteger intervalRequests = new AtomicInteger(0);
 
     private final int id;
-    private final T benchmark;
-    protected final Connection conn;
+    protected final T benchmark;
+    protected Connection conn;
     protected final WorkloadConfiguration configuration;
     protected final TransactionTypes transactionTypes;
     protected final Map<TransactionType, Procedure> procedures = new HashMap<>();

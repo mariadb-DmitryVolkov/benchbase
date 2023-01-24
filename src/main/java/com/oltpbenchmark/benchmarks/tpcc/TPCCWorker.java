@@ -77,8 +77,8 @@ public class TPCCWorker extends Worker<TPCCBenchmark> {
                 this.conn = this.benchmark.makeConnection();
                 this.conn.setAutoCommit(false);
                 this.conn.setTransactionIsolation(this.configuration.getIsolationMode());
-            } catch (SQLException ex) {
-                throw new RuntimeException("Failed to connect to database.", ex);
+            } catch (SQLException exex) {
+                throw new RuntimeException("Failed to connect to database.", exex);
             }
         }
 
