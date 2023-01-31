@@ -82,7 +82,9 @@ public class Delivery extends TPCCProcedure {
             "   AND C_ID = ? ");
 
 
-    public void run(Connection conn, Random gen, int w_id, int numWarehouses, int terminalDistrictLowerID, int terminalDistrictUpperID, TPCCWorker w) throws SQLException {
+    public void run(Connection conn, Random gen, int terminalWarehouseLowerID, int terminalWarehouseUpperID, int numWarehouses, int terminalDistrictLowerID, int terminalDistrictUpperID, TPCCWorker w) throws SQLException {
+
+        int w_id = TPCCUtil.randomNumber(terminalWarehouseLowerID, terminalWarehouseUpperID, gen);
 
         int o_carrier_id = TPCCUtil.randomNumber(1, 10, gen);
 

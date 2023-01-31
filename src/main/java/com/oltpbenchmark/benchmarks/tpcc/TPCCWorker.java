@@ -34,10 +34,11 @@ public class TPCCWorker extends Worker<TPCCBenchmark> {
 
     private static final Logger LOG = LoggerFactory.getLogger(TPCCWorker.class);
 
-    private final int terminalWarehouseID;
     /**
      * Forms a range [lower, upper] (inclusive).
      */
+    private final int terminalWarehouseLowerID;
+    private final int terminalWarehouseUpperID;
     private final int terminalDistrictLowerID;
     private final int terminalDistrictUpperID;
     private final Random gen = new Random();
@@ -45,11 +46,14 @@ public class TPCCWorker extends Worker<TPCCBenchmark> {
     private final int numWarehouses;
 
     public TPCCWorker(TPCCBenchmark benchmarkModule, int id,
-                      int terminalWarehouseID, int terminalDistrictLowerID,
-                      int terminalDistrictUpperID, int numWarehouses) {
+                      int terminalWarehouseLowerID, int terminalWarehouseUpperID,
+                      int terminalDistrictLowerID, int terminalDistrictUpperID,
+                      int numWarehouses) {
+
         super(benchmarkModule, id);
 
-        this.terminalWarehouseID = terminalWarehouseID;
+        this.terminalWarehouseLowerID = terminalWarehouseLowerID;
+        this.terminalWarehouseUpperID = terminalWarehouseUpperID;
         this.terminalDistrictLowerID = terminalDistrictLowerID;
         this.terminalDistrictUpperID = terminalDistrictUpperID;
 
@@ -64,8 +68,9 @@ public class TPCCWorker extends Worker<TPCCBenchmark> {
     protected TransactionStatus executeWork(Connection conn, TransactionType nextTransaction) throws UserAbortException, SQLException {
         try {
             TPCCProcedure proc = (TPCCProcedure) this.getProcedure(nextTransaction.getProcedureClass());
-            proc.run(conn, gen, terminalWarehouseID, numWarehouses,
-                    terminalDistrictLowerID, terminalDistrictUpperID, this);
+            proc.run(conn, gen, terminalWarehouseLowerID, terminalWarehouseUpperID,
+                    numWarehouses, terminalDistrictLowerID, terminalDistrictUpperID,
+                    this);
         } catch (ClassCastException ex) {
             //fail gracefully
             LOG.error("We have been invoked with an INVALID transactionType?!", ex);
