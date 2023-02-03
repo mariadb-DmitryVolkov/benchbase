@@ -15,6 +15,8 @@
  *
  */
 
+/*  Random and segmented workload distribution - Jonah H. Harris, jonah.harris@gmail.com */
+
 package com.oltpbenchmark.benchmarks.tpcc.procedures;
 
 import com.oltpbenchmark.api.SQLStmt;
@@ -109,7 +111,9 @@ public class Payment extends TPCCProcedure {
             "   AND C_LAST = ? " +
             " ORDER BY C_FIRST");
 
-    public void run(Connection conn, Random gen, int w_id, int numWarehouses, int terminalDistrictLowerID, int terminalDistrictUpperID, TPCCWorker worker) throws SQLException {
+    public void run(Connection conn, Random gen, int terminalWarehouseLowerID, int terminalWarehouseUpperID, int numWarehouses, int terminalDistrictLowerID, int terminalDistrictUpperID, TPCCWorker worker) throws SQLException {
+
+        int w_id = TPCCUtil.randomNumber(terminalWarehouseLowerID, terminalWarehouseUpperID, gen);
 
         int districtID = TPCCUtil.randomNumber(terminalDistrictLowerID, terminalDistrictUpperID, gen);
 
