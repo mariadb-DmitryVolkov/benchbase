@@ -15,6 +15,7 @@
  *
  */
 
+ /*  Random and segmented workload distribution - Jonah H. Harris, jonah.harris@gmail.com */
 
 package com.oltpbenchmark.benchmarks.tpcc;
 
