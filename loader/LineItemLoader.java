@@ -8,9 +8,9 @@ import java.util.concurrent.*;
 
 public class LineItemLoader implements Runnable {
 
-  private static final int BATCH_SIZE = 50;
-  private static final int MAX_CONCURRENCY = 72;
-
+  private static final int BATCH_SIZE = 25;
+  private static final int COMMIT_SIZE = 25;
+  private static final int MAX_CONCURRENCY = 144;
   private String fileName;
   private String connectString;
   private String username;
@@ -36,14 +36,15 @@ public class LineItemLoader implements Runnable {
                   + " l_commitdate, l_receiptdate, l_shipinstruct, l_shipmode, l_comment) VALUES"
                   + " (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
-      BufferedReader reader = new BufferedReader(new FileReader(fileName));
+      Thread.sleep((long)(Math.random() * 10000));
+      BufferedReader reader = new BufferedReader(new FileReader(fileName), 1048576);
       System.out.println(String.format("Processing %s", fileName));
       String line;
       int count = 0;
       while ((line = reader.readLine()) != null) {
         String[] parts = line.split("\\|");
 
-        stmt.setInt(1, Integer.parseInt(parts[0].trim()));
+        stmt.setLong(1, Long.parseLong(parts[0].trim()));
         stmt.setInt(2, Integer.parseInt(parts[1].trim()));
         stmt.setInt(3, Integer.parseInt(parts[2].trim()));
         stmt.setInt(4, Integer.parseInt(parts[3].trim()));
@@ -65,10 +66,12 @@ public class LineItemLoader implements Runnable {
 
         if (count % BATCH_SIZE == 0) {
           stmt.executeBatch();
-	  con.commit();
+        }
+
+        if (count % COMMIT_SIZE == 0) {
+                con.commit();
         }
       }
-
       stmt.executeBatch();
       con.commit();
 
