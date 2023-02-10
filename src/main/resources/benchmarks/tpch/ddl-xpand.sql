@@ -90,7 +90,7 @@ CREATE INDEX idx_mktsegment on customer (c_mktsegment) DISTRIBUTE=1;
 CREATE INDEX idx_acctbal on customer (c_acctbal) DISTRIBUTE=1;
 
 CREATE TABLE orders (
-    o_orderkey      integer        NOT NULL,
+    o_orderkey      bigint        NOT NULL,
     o_custkey       integer        NOT NULL,
     o_orderstatus   char(1)        NOT NULL,
     o_totalprice    decimal(15, 2) NOT NULL,
@@ -107,7 +107,7 @@ CREATE INDEX idx_orderstatus on orders (o_orderstatus) DISTRIBUTE=1;
 CREATE INDEX idx_orderdate on orders (o_orderdate) DISTRIBUTE=1;
 
 CREATE TABLE lineitem (
-    l_orderkey      integer        NOT NULL,
+    l_orderkey      bigint        NOT NULL,
     l_partkey       integer        NOT NULL,
     l_suppkey       integer        NOT NULL,
     l_linenumber    integer        NOT NULL,
