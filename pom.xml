@@ -101,9 +101,9 @@
             </dependencies>
         </profile>
         <profile>
-            <id>aurora-mysql</id>
+            <id>aurora_mysql</id>
             <properties>
-                <classifier>aurora-mysql</classifier>
+                <classifier>aurora_mysql</classifier>
             </properties>
             <dependencies>
                 <dependency>
@@ -114,9 +114,9 @@
             </dependencies>
         </profile>
         <profile>
-            <id>aurora-postgres</id>
+            <id>aurora_postgres</id>
             <properties>
-                <classifier>aurora-postgres</classifier>
+                <classifier>aurora_postgres</classifier>
             </properties>
             <dependencies>
                 <dependency>
