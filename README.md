@@ -1,4 +1,5 @@
 # BenchBase
+## This repo is not maintained anymore (as of 04/28/2023). Development has moved to [this repo](https://github.com/mariadb-corporation/benchbase).
 
 [![BenchBase (Java with Maven)](https://github.com/cmu-db/benchbase/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/cmu-db/benchbase/actions/workflows/maven.yml)
 
